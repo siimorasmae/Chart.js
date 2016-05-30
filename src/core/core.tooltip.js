@@ -29,6 +29,8 @@ module.exports = function(Chart) {
 		caretSize: 5,
 		cornerRadius: 6,
 		multiKeyBackground: '#fff',
+		drawVerticalLine: true,
+		verticalLineColor: 'rgba(49,45,42,.42)',
 		callbacks: {
 			// Args are: (tooltipItems, data)
 			beforeTitle: helpers.noop,
@@ -515,6 +517,8 @@ module.exports = function(Chart) {
 			var width = size.width,
 				height = size.height;
 
+				// console.log( ctx.canvas.height );
+
 			if (yAlign === 'center') {
 				// Left or right side
 				if (xAlign === 'left') {
@@ -564,6 +568,18 @@ module.exports = function(Chart) {
 			ctx.lineTo(x3, y3);
 			ctx.closePath();
 			ctx.fill();
+
+			// vertical line
+			if (this._options.drawVerticalLine) {
+				var x = Math.floor(x2),
+					y = Math.floor(y2),
+					h = Math.floor(ctx.canvas.height);
+
+				ctx.moveTo(x, y);
+				ctx.lineTo(x, h);
+				ctx.strokeStyle = this._options.verticalLineColor;
+				ctx.stroke();
+			}
 		},
 		drawTitle: function drawTitle(pt, vm, ctx, opacity) {
 			var title = vm.title;
