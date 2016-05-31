@@ -228,7 +228,7 @@ module.exports = function(Chart) {
 			var callbacks = me._options.callbacks;
 			var bodyItems = [];
 
-			helpers.each(tooltipItems, function(tooltipItem) {
+			helpers.each(tooltipItems.slice(0,1), function(tooltipItem) {
 				var bodyItem = {
 					before: [],
 					lines: [],
