@@ -228,7 +228,7 @@ module.exports = function(Chart) {
 			var callbacks = me._options.callbacks;
 			var bodyItems = [];
 
-			helpers.each(tooltipItems, function(tooltipItem) {
+			helpers.each(tooltipItems.slice(0,1), function(tooltipItem) {
 				var bodyItem = {
 					before: [],
 					lines: [],
@@ -444,7 +444,7 @@ module.exports = function(Chart) {
 
 				// Is tooltip too wide and goes over the right side of the chart.?
 				if (olf(model.x)) {
-					model.xAlign = 'center';
+					model.xAlign = 'bottom';
 					model.yAlign = yf(model.y);
 				}
 			} else if (rf(model.x)) {
@@ -452,7 +452,7 @@ module.exports = function(Chart) {
 
 				// Is tooltip too wide and goes outside left edge of canvas?
 				if (orf(model.x)) {
-					model.xAlign = 'center';
+					model.xAlign = 'bottom';
 					model.yAlign = yf(model.y);
 				}
 			}
@@ -516,8 +516,6 @@ module.exports = function(Chart) {
 				ptY = tooltipPoint.y;
 			var width = size.width,
 				height = size.height;
-
-				// console.log( ctx.canvas.height );
 
 			if (yAlign === 'center') {
 				// Left or right side
