@@ -572,10 +572,10 @@ module.exports = function(Chart) {
 						// Draw the label area
 						context.beginPath();
 
-						if (gridLines.drawTicks) {
-							context.moveTo(xLineValue, yTickStart);
-							context.lineTo(xLineValue, yTickEnd);
-						}
+						// if (gridLines.drawTicks) {
+						// 	context.moveTo(xLineValue, yTickStart);
+						// 	context.lineTo(xLineValue, yTickEnd);
+						// }
 
 						// Draw the chart area
 						if (gridLines.drawOnChartArea) {
@@ -588,13 +588,18 @@ module.exports = function(Chart) {
 					}
 
 					if (optionTicks.display) {
+						label = label.split(' ');
+
 						context.save();
 						context.translate(xLabelValue + optionTicks.labelOffset, (isRotated) ? this.top + 12 : options.position === "top" ? this.bottom - tl : this.top + tl);
 						context.rotate(labelRotationRadians * -1);
 						context.font = tickLabelFont;
 						context.textAlign = (isRotated) ? "right" : "center";
 						context.textBaseline = (isRotated) ? "middle" : options.position === "top" ? "bottom" : "top";
-						context.fillText(label, 0, 0);
+						context.fillText(label[0], 0, 0);
+						context.fillText(label[1], 0, 14);
+						context.font = 'bold 19px Roboto, sans-serif';
+						context.fillText('•', .5, 33);
 						context.restore();
 					}
 				}, this);
@@ -685,7 +690,7 @@ module.exports = function(Chart) {
 						context.translate(xLabelValue, yLabelValue + optionTicks.labelOffset);
 						context.rotate(labelRotationRadians * -1);
 						context.font = tickLabelFont;
-						context.textBaseline = "middle";
+						context.textBaseline = (index === 0 ) ? "hanging" : (index === this.ticks.length-1) ? "alphabetic" : "middle";
 						context.fillText(label, 0, 0);
 						context.restore();
 					}

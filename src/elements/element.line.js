@@ -69,6 +69,7 @@ module.exports = function(Chart) {
 
 			// If we had points and want to fill this line, do so.
 			if (this._children.length > 0 && vm.fill) {
+
 				// Draw the background first (so the border is always on top)
 				ctx.beginPath();
 
