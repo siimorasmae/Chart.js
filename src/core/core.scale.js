@@ -549,7 +549,7 @@ module.exports = function(Chart) {
 
 					// Since we always show the last tick,we need may need to hide the last shown one before
 					var shouldSkip = (skipRatio > 1 && index % skipRatio > 0) || (index % skipRatio === 0 && index + skipRatio >= this.ticks.length);
-					if (shouldSkip && !isLastTick || (label === undefined || label === null)) {
+					if (isLastTick || (shouldSkip && !isLastTick) || (label === undefined || label === null)) {
 						return;
 					}
 					var xLineValue = this.getPixelForTick(index); // xvalues for grid lines
