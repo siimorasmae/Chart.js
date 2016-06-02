@@ -690,7 +690,7 @@ module.exports = function(Chart) {
 						context.translate(xLabelValue, yLabelValue + optionTicks.labelOffset);
 						context.rotate(labelRotationRadians * -1);
 						context.font = tickLabelFont;
-						context.textBaseline = (index === 0 ) ? "hanging" : (index === this.ticks.length-1) ? "alphabetic" : "middle";
+						context.textBaseline = (index === 0 ) ? "hanging" : "middle";
 						context.fillText(label, 0, 0);
 						context.restore();
 					}

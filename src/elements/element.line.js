@@ -79,6 +79,9 @@ module.exports = function(Chart) {
 
 					// First point moves to it's starting position no matter what
 					if (index === 0) {
+						// Always fill right up to the bottom edge
+						this._view.scaleZero = this._chart.height;
+
 						if (this._loop) {
 							ctx.moveTo(vm.scaleZero.x, vm.scaleZero.y);
 						} else {
