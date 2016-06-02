@@ -363,8 +363,8 @@ module.exports = function(Chart) {
 
 			if (this.margins) {
 				this.paddingLeft = Math.max(this.paddingLeft - this.margins.left, 0);
-				this.paddingTop = Math.max(this.paddingTop - this.margins.top, 0);
-				this.paddingRight = Math.max(this.paddingRight - this.margins.right, 0);
+				this.paddingTop = 15;
+				this.paddingRight = 0;
 				this.paddingBottom = Math.max(this.paddingBottom - this.margins.bottom, 0);
 			}
 
