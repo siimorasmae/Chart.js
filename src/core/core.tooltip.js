@@ -3,6 +3,7 @@
 module.exports = function(Chart) {
 
 	var helpers = Chart.helpers;
+	var last;
 
 	Chart.defaults.global.tooltips = {
 		enabled: true,
@@ -280,15 +281,20 @@ module.exports = function(Chart) {
 
 			var i, len;
 
-			if (active.length) {
+			// if (active.length || last) {
 				model.opacity = 1;
 
 				var labelColors = [],
 					tooltipPosition = getAveragePosition(active);
 
 				var tooltipItems = [];
-				for (i = 0, len = active.length; i < len; ++i) {
-					tooltipItems.push(createTooltipItem(active[i]));
+				if (active.length) {
+					last = active;
+					for (i = 0, len = active.length; i < len; ++i) {
+						tooltipItems.push(createTooltipItem(active[i]));
+					}
+				} else if (last) {
+					tooltipItems.push(createTooltipItem(last));
 				}
 
 				// If the user provided a sorting function, use it to modify the tooltip items
@@ -321,9 +327,9 @@ module.exports = function(Chart) {
 				me.determineAlignment(tooltipSize); // Smart Tooltip placement to stay on the canvas
 
 				helpers.extend(model, me.getBackgroundPoint(model, tooltipSize));
-			} else {
-				me._model.opacity = 0;
-			}
+			// } else {
+			// 	me._model.opacity = 0;
+			// }
 
 			if (changed && opts.custom) {
 				opts.custom.call(me, model);
@@ -401,9 +407,9 @@ module.exports = function(Chart) {
 			var chart = me._chart;
 			var chartArea = me._chartInstance.chartArea;
 
-			if (model.y < size.height) {
+			if (model.y < size.height * 2) {
 				model.yAlign = 'top';
-			} else if (model.y > (chart.height - size.height)) {
+			} else {
 				model.yAlign = 'bottom';
 			}
 
@@ -445,7 +451,7 @@ module.exports = function(Chart) {
 				// Is tooltip too wide and goes over the right side of the chart.?
 				if (olf(model.x)) {
 					model.xAlign = 'center';
-					model.yAlign = yf(model.y);
+					model.yAlign = 'bottom';
 				}
 			} else if (rf(model.x)) {
 				model.xAlign = 'right';
@@ -453,7 +459,7 @@ module.exports = function(Chart) {
 				// Is tooltip too wide and goes outside left edge of canvas?
 				if (orf(model.x)) {
 					model.xAlign = 'center';
-					model.yAlign = yf(model.y);
+					model.yAlign = 'bottom';
 				}
 			}
 		},
