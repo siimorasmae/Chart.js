@@ -4183,8 +4183,8 @@ module.exports = function(Chart) {
 				me.active = [];
 				me.tooltipActive = [];
 			} else {
-				me.active = me.getElementsAtEventForMode(e, hoverOptions.mode);
-				me.tooltipActive =  me.getElementsAtEventForMode(e, tooltipsOptions.mode);
+				me.active = (me.getElementsAtEventForMode(e, hoverOptions.mode).length) ? me.getElementsAtEventForMode(e, hoverOptions.mode) : me.lastActive;
+				me.tooltipActive =  (me.getElementsAtEventForMode(e, tooltipsOptions.mode).length) ? me.getElementsAtEventForMode(e, tooltipsOptions.mode) : me.lastTooltipActive;
 			}
 
 			// On Hover hook
@@ -7331,7 +7331,6 @@ module.exports = function(Chart) {
 module.exports = function(Chart) {
 
 	var helpers = Chart.helpers;
-	var last;
 
 	Chart.defaults.global.tooltips = {
 		enabled: true,
@@ -7353,6 +7352,7 @@ module.exports = function(Chart) {
 		footerAlign: "left",
 		yPadding: 6,
 		xPadding: 6,
+        ySpacing: 2,
 		yAlign : 'center',
 		xAlign : 'center',
 		caretSize: 5,
@@ -7488,6 +7488,7 @@ module.exports = function(Chart) {
 					yPadding: tooltipOpts.yPadding,
 					xAlign : tooltipOpts.yAlign,
 					yAlign : tooltipOpts.xAlign,
+                    ySpacing: tooltipOpts.ySpacing,
 
 					// Body
 					bodyColor: tooltipOpts.bodyColor,
@@ -7617,12 +7618,9 @@ module.exports = function(Chart) {
 
 				var tooltipItems = [];
 				if (active.length) {
-					last = active;
 					for (i = 0, len = active.length; i < len; ++i) {
 						tooltipItems.push(createTooltipItem(active[i]));
 					}
-				} else if (last) {
-					tooltipItems.push(createTooltipItem(last));
 				}
 
 				// If the user provided a sorting function, use it to modify the tooltip items
@@ -7631,7 +7629,7 @@ module.exports = function(Chart) {
 				}
 
 				// If there is more than one item, show color items
-				if (active.length > 1) {
+				if (active.length) {
 					helpers.each(tooltipItems, function(tooltipItem) {
 						labelColors.push(opts.callbacks.labelColor.call(me, tooltipItem, chartInstance));
 					});
@@ -7906,7 +7904,7 @@ module.exports = function(Chart) {
 			// vertical line
 			if (this._options.drawVerticalLine) {
 				var x = Math.floor(x2),
-					y = Math.floor(y2),
+					y = Math.floor(y2 + vm.ySpacing),
 					h = Math.floor(ctx.canvas.height);
 
 				ctx.moveTo(x, y);
@@ -8032,7 +8030,7 @@ module.exports = function(Chart) {
 			var tooltipSize = this.getTooltipSize(vm);
 			var pt = {
 				x: vm.x,
-				y: vm.y
+				y: vm.y - vm.ySpacing
 			};
 
 			// IE11/Edge does not like very small opacities, so snap to 0

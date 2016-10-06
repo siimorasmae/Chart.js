@@ -517,8 +517,8 @@ module.exports = function(Chart) {
 				me.active = [];
 				me.tooltipActive = [];
 			} else {
-				me.active = me.getElementsAtEventForMode(e, hoverOptions.mode);
-				me.tooltipActive =  me.getElementsAtEventForMode(e, tooltipsOptions.mode);
+				me.active = (me.getElementsAtEventForMode(e, hoverOptions.mode).length) ? me.getElementsAtEventForMode(e, hoverOptions.mode) : me.lastActive;
+				me.tooltipActive =  (me.getElementsAtEventForMode(e, tooltipsOptions.mode).length) ? me.getElementsAtEventForMode(e, tooltipsOptions.mode) : me.lastTooltipActive;
 			}
 
 			// On Hover hook
