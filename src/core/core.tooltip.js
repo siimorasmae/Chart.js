@@ -129,7 +129,7 @@ module.exports = function(Chart) {
 		};
 	}
 
-	// Private helper to create a tooltip iteam model
+	// Private helper to create a tooltip item model
 	// @param element : the chart element (point, arc, bar) to create the tooltip item for
 	// @return : new tooltip item
 	function createTooltipItem(element) {

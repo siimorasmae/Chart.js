@@ -596,10 +596,11 @@ module.exports = function(Chart) {
 						context.font = tickLabelFont;
 						context.textAlign = (isRotated) ? "right" : "center";
 						context.textBaseline = (isRotated) ? "middle" : options.position === "top" ? "bottom" : "top";
-						context.fillText(label[0], 0, 0);
-						context.fillText(label[1], 0, 14);
-						context.font = 'bold 19px Roboto, sans-serif';
-						context.fillText('•', .5, 33);
+                        context.fillText(label[0].slice(0, -5), 0, 0);
+                        context.fillText(label[0].slice(-4), 0, 14);
+						// context.fillText(label[1], 0, 14);
+						// context.font = 'bold 19px Roboto, sans-serif';
+						// context.fillText('•', .5, 33);
 						context.restore();
 					}
 				}, this);
