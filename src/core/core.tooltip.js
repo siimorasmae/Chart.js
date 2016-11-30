@@ -129,6 +129,40 @@ module.exports = function(Chart) {
 		};
 	}
 
+    function getTopPosition(elements) {
+        if (!elements.length) {
+            return false;
+        }
+
+        var i, len;
+        var yTopPosition = ctx.canvas.height,
+            xAvgPosition = [];
+
+        for (i = 0, len = elements.length; i < len; ++i) {
+            var el = elements[i];
+            if (el && el.hasValue()){
+                var pos = el.tooltipPosition();
+
+                if (pos.y < yTopPosition)
+                    yTopPosition = pos.y;
+
+                // console.log( i, pos.y );
+
+                xAvgPosition.push(pos.x);
+            }
+        }
+
+        var x = 0;
+        for (i = 0, len - xAvgPosition.length; i < len; ++i) {
+            x += xAvgPosition[i];
+        }
+
+        return {
+            x: Math.round(x / xAvgPosition.length),
+            y: Math.round( yTopPosition )
+        };
+    }
+
 	// Private helper to create a tooltip item model
 	// @param element : the chart element (point, arc, bar) to create the tooltip item for
 	// @return : new tooltip item
@@ -286,7 +320,8 @@ module.exports = function(Chart) {
 				model.opacity = 1;
 
 				var labelColors = [],
-					tooltipPosition = getAveragePosition(active);
+                    tooltipPosition = getTopPosition(active);
+					// tooltipPosition = getAveragePosition(active);
 
 				var tooltipItems = [];
 				if (active.length) {
@@ -645,16 +680,17 @@ module.exports = function(Chart) {
 					// Draw Legend-like boxes if needed
 					if (drawColorBoxes) {
 						// Fill a white rect so that colours merge nicely if the opacity is < 1
-						ctx.fillStyle = helpers.color(vm.legendColorBackground).alpha(opacity).rgbaString();
-						ctx.fillRect(pt.x, pt.y, bodyFontSize, bodyFontSize);
+						// ctx.fillStyle = helpers.color(vm.legendColorBackground).alpha(opacity).rgbaString();
+						// ctx.fillRect(pt.x, pt.y, bodyFontSize, bodyFontSize);
 
 						// Border
-						ctx.strokeStyle = helpers.color(vm.labelColors[i].borderColor).alpha(opacity).rgbaString();
-						ctx.strokeRect(pt.x, pt.y, bodyFontSize, bodyFontSize);
+						// ctx.strokeStyle = helpers.color(vm.labelColors[i].borderColor).alpha(opacity).rgbaString();
+						// ctx.strokeRect(pt.x, pt.y, bodyFontSize, bodyFontSize);
 
 						// Inner square
-						ctx.fillStyle = helpers.color(vm.labelColors[i].backgroundColor).alpha(opacity).rgbaString();
-						ctx.fillRect(pt.x + 1, pt.y + 1, bodyFontSize - 2, bodyFontSize - 2);
+						ctx.fillStyle = helpers.color(vm.labelColors[i].borderColor).alpha(opacity).rgbaString();
+                        ctx.fillRect(pt.x, pt.y, bodyFontSize, bodyFontSize);
+						// ctx.fillRect(pt.x + 1, pt.y + 1, bodyFontSize - 2, bodyFontSize - 2);
 
 						ctx.fillStyle = textColor;
 					}

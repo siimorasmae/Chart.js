@@ -549,7 +549,8 @@ module.exports = function(Chart) {
 
 					// Since we always show the last tick,we need may need to hide the last shown one before
 					var shouldSkip = (skipRatio > 1 && index % skipRatio > 0) || (index % skipRatio === 0 && index + skipRatio >= this.ticks.length);
-					if (isLastTick || (shouldSkip && !isLastTick) || (label === undefined || label === null)) {
+					// if (isLastTick || (shouldSkip && !isLastTick) || (label === undefined || label === null)) {
+                    if ((shouldSkip && !isLastTick) || (label === undefined || label === null)) {
 						return;
 					}
 					var xLineValue = this.getPixelForTick(index); // xvalues for grid lines
@@ -579,28 +580,32 @@ module.exports = function(Chart) {
 
 						// Draw the chart area
 						if (gridLines.drawOnChartArea) {
-							context.moveTo(xLineValue, chartArea.top);
-							context.lineTo(xLineValue, chartArea.bottom);
+							context.moveTo((isLastTick) ? xLineValue-1 : xLineValue, chartArea.top - 6);
+							context.lineTo((isLastTick) ? xLineValue-1 : xLineValue, chartArea.bottom);
 						}
 
 						// Need to stroke in the loop because we are potentially changing line widths & colours
 						context.stroke();
+
+                        // Bullet point
+                        // if (!isLastTick) {
+                            context.beginPath();
+                            context.arc((isLastTick) ? xLineValue-3 : xLineValue, chartArea.top - 6, 2, 0, 2 * Math.PI, false);
+                            context.fillStyle = scaleLabelFontColor;
+                            context.fill();
+                        // }
+
 					}
 
 					if (optionTicks.display) {
-						label = label.split(' ');
-
 						context.save();
-						context.translate(xLabelValue + optionTicks.labelOffset, (isRotated) ? this.top + 12 : options.position === "top" ? this.bottom - tl : this.top + tl);
+						context.translate((isLastTick) ? xLabelValue-17 : xLabelValue + optionTicks.labelOffset, (isRotated) ? this.top + 12 : options.position === "top" ? this.bottom - tl : this.top + tl);
 						context.rotate(labelRotationRadians * -1);
 						context.font = tickLabelFont;
 						context.textAlign = (isRotated) ? "right" : "center";
 						context.textBaseline = (isRotated) ? "middle" : options.position === "top" ? "bottom" : "top";
-                        context.fillText(label[0].slice(0, -5), 0, 0);
-                        context.fillText(label[0].slice(-4), 0, 14);
-						// context.fillText(label[1], 0, 14);
-						// context.font = 'bold 19px Roboto, sans-serif';
-						// context.fillText('•', .5, 33);
+                        context.fillText(label.slice(0, -5), 0, 0);
+                        context.fillText(label.slice(-4), 0, 14);
 						context.restore();
 					}
 				}, this);

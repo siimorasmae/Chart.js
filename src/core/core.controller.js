@@ -360,31 +360,21 @@ module.exports = function(Chart) {
                         var meta = this.getDatasetMeta(i);
                         if (this.isDatasetVisible(i)) {
 
-                            var midpoint,
-                                last = 0,
-                                next = 0;
-
                             for (var j = 0; j < meta.data.length; j++) {
 
                                 if (eventPosition.x > meta.data[0]._view.x && eventPosition.x < meta.data[j]._view.x) {
-                                    // console.log( meta.data[j-1] );
-                                    last = meta.data[j-1]._view.x;
-                                    next = meta.data[j]._view.x;
 
-                                    midpoint = (last + next)/2;
+                                    var last = meta.data[j-1]._view.x;
+                                    var next = meta.data[j]._view.x;
+                                    var midpoint = (last + next)/2;
 
                                     if (eventPosition.x < midpoint)
                                         return meta.data[j-1];
                                     else
                                         return meta.data[j];
-
-                                    // console.log( eventPosition.x, meta.data[j-1]._view.x );
-
-                                    // return meta.data[j];
                                 }
 
                                 // if (meta.data[j].inRange(eventPosition.x, eventPosition.y)) {
-                                //     // console.log(meta.data[j-1], meta.data[j] ,meta.data[j+1]);
                                 //     return meta.data[j];
                                 // }
                             }
@@ -393,17 +383,16 @@ module.exports = function(Chart) {
                 }
             }).call(this);
 
-            // if (!found) {
-            //     return elementsArray;
-            // }
+            if (!found) {
+                return elementsArray;
+            }
 
-            // helpers.each(this.data.datasets, function(dataset, datasetIndex) {
-            //     console.log( found );
-            //     if (this.isDatasetVisible(datasetIndex)) {
-            //         var meta = this.getDatasetMeta(datasetIndex);
-            //         elementsArray.push(meta.data[found._index]);
-            //     }
-            // }, this);
+            helpers.each(this.data.datasets, function(dataset, datasetIndex) {
+                if (this.isDatasetVisible(datasetIndex)) {
+                    var meta = this.getDatasetMeta(datasetIndex);
+                    elementsArray.push(meta.data[found._index]);
+                }
+            }, this);
 
             return elementsArray;
         },
