@@ -555,12 +555,12 @@ module.exports = function(Chart) {
 					var even = Math.floor(overflow / ticks);
 					var actualSkipRatio = skipRatio + even;
 					var newOverflow =  tickLength - (ticks * actualSkipRatio);
-
-					for (var i = 0; i < this.ticks.length / 2; i = Math.floor(i + actualSkipRatio)) {
+					var maxLength = this.ticks.length / 2;
+					for (var i = 0; i < maxLength; i = Math.floor(i + actualSkipRatio)) {
 						var left = i;
 						var right = tickLength - i;
 						var diff = right - left;
-						if (diff <= 1) {
+						if (diff <= actualSkipRatio - 1) {
 							indexes.push(Math.floor(left + diff / 2));
 							break;
 						} else {
@@ -614,8 +614,8 @@ module.exports = function(Chart) {
 
 						// Draw the chart area
 						if (gridLines.drawOnChartArea) {
-							context.moveTo((isLastTick) ? xLineValue-1 : xLineValue, chartArea.top - 6);
-							context.lineTo((isLastTick) ? xLineValue-1 : xLineValue, chartArea.bottom);
+							context.moveTo((isLastTick) ? xLineValue-3 : xLineValue, chartArea.top - 6);
+							context.lineTo((isLastTick) ? xLineValue-3 : xLineValue, chartArea.bottom);
 						}
 
 						// Need to stroke in the loop because we are potentially changing line widths & colours
