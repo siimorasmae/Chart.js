@@ -5991,135 +5991,35 @@ module.exports = function(Chart) {
                 }
 
 				if ((longestRotatedLabel + optionTicks.autoSkipPadding) * this.ticks.length > (this.width - (this.paddingLeft + this.paddingRight))) {
-					//skipRatio = 1 + Math.floor(((longestRotatedLabel + optionTicks.autoSkipPadding) * this.ticks.length) / (this.width - (this.paddingLeft + this.paddingRight)));
-					skipRatio = Math.floor(((longestRotatedLabel + optionTicks.autoSkipPadding) * this.ticks.length) / (this.width - (this.paddingLeft + this.paddingRight)));
-					/*var tickNumber = Math.floor(this.ticks.length / skipRatio);
-					skipRatio =  Math.floor(this.ticks.length / (tickNumber - 1));*/
+					skipRatio = 1 + Math.floor(((longestRotatedLabel + optionTicks.autoSkipPadding) * this.ticks.length) / (this.width - (this.paddingLeft + this.paddingRight)));
 				}
 				// if they defined a max number of optionTicks,
 				// increase skipRatio until that number is met
-				
 				if (maxTicks && this.ticks.length > maxTicks) {
-					/*while (!skipRatio || this.ticks.length / (skipRatio || 1) > maxTicks) {
+					while (!skipRatio || this.ticks.length / (skipRatio || 1) > maxTicks) {
 						if (!skipRatio) {
 							skipRatio = 1;
 						}
 						skipRatio += 1;
-					}*/
-					skipRatio =  Math.floor(this.ticks.length / maxTicks);
+					}
 				}
+
 				if (!useAutoskipper) {
 					skipRatio = false;
 				}
-				var indexes = [];
-				if (skipRatio !== false) {
-					var ticks = Math.max(Math.floor(this.ticks.length / skipRatio) - 1,1);
-					var tickLength = this.ticks.length - 1;
-					var overflow = tickLength - (ticks * skipRatio);
-					var even = Math.floor(overflow / ticks);
-					var actualSkipRatio = skipRatio + even;
-					var newOverflow =  tickLength - (ticks * actualSkipRatio);
-					var maxLength = this.ticks.length / 2;
-					for (var i = 0; i < maxLength; i = Math.floor(i + actualSkipRatio)) {
-						var left = i;
-						var right = tickLength - i;
-						var diff = right - left;
-						if (diff <= actualSkipRatio - 1) {
-							indexes.push(Math.floor(left + diff / 2));
-							break;
-						} else {
-							indexes.push(left);
-							indexes.push(right);
-						}
-						if(newOverflow > 1) {
-							newOverflow = newOverflow - 2;
-							i++;
-						}
-					}
-					indexes.sort(function (a, b) {
-				  		return a - b;
-					});
-				} else {
-					for (var i = 0; i < this.ticks.length; i++) {
-						indexes.push(i);
-					}
-				}
-				for (var i = 0; i < indexes.length; i++) {
 
-					var index = indexes[i];
-					var label = this.ticks[index];
-					// Blank optionTicks
-					var isLastTick = i === indexes.length - 1;
-					//var isLastTick = index + (skipRatio / 2) >= this.ticks.length;
-
-					var xLineValue = this.getPixelForTick(index); // xvalues for grid lines
-					var xLabelValue = this.getPixelForTick(index, gridLines.offsetGridLines); // x values for optionTicks (need to consider offsetLabel option)
-					if (gridLines.display) {
-						if (index === (typeof this.zeroLineIndex !== 'undefined' ? this.zeroLineIndex : 0)) {
-							// Draw the first index specially
-							context.lineWidth = gridLines.zeroLineWidth;
-							context.strokeStyle = gridLines.zeroLineColor;
-							setContextLineSettings = true; // reset next time
-						} else if (setContextLineSettings) {
-							context.lineWidth = gridLines.lineWidth;
-							context.strokeStyle = gridLines.color;
-							setContextLineSettings = false;
-						}
-
-						xLineValue += helpers.aliasPixel(context.lineWidth);
-
-						// Draw the label area
-						context.beginPath();
-
-						// if (gridLines.drawTicks) {
-						// 	context.moveTo(xLineValue, yTickStart);
-						// 	context.lineTo(xLineValue, yTickEnd);
-						// }
-
-						// Draw the chart area
-						if (gridLines.drawOnChartArea) {
-							context.moveTo((isLastTick) ? xLineValue-3 : xLineValue, chartArea.top - 6);
-							context.lineTo((isLastTick) ? xLineValue-3 : xLineValue, chartArea.bottom);
-						}
-
-						// Need to stroke in the loop because we are potentially changing line widths & colours
-						context.stroke();
-
-                        // Bullet point
-                        // if (!isLastTick) {
-                            context.beginPath();
-                            context.arc((isLastTick) ? xLineValue-3 : xLineValue, chartArea.top - 6, 2, 0, 2 * Math.PI, false);
-                            context.fillStyle = scaleLabelFontColor;
-                            context.fill();
-                        // }
-
-					}
-
-					if (optionTicks.display) {
-						context.save();
-						context.translate((isLastTick) ? xLabelValue-17 : xLabelValue + optionTicks.labelOffset, (isRotated) ? this.top + 12 : options.position === "top" ? this.bottom - tl : this.top + tl);
-						context.rotate(labelRotationRadians * -1);
-						context.font = tickLabelFont;
-						context.textAlign = (isRotated) ? "right" : "center";
-						context.textBaseline = (isRotated) ? "middle" : options.position === "top" ? "bottom" : "top";
-                        context.fillText(label.slice(0, -5), 0, 0);
-                        context.fillText(label.slice(-4), 0, 14);
-						context.restore();
-					}
-				}
-				//helpers.each(this.ticks, function (label, index) {
-					//var shouldSkip = (skipRatio > 1 && index % skipRatio > 0); /*|| (index % skipRatio === 0 && index + skipRatio >= this.ticks.length)*/;
-
-					// if (isLastTick || (shouldSkip && !isLastTick) || (label === undefined || label === null)) {
-                   /* if ((shouldSkip && !isLastTick) || (label === undefined || label === null)) {
+				var fullWidth = this.left + this.width;
+				helpers.each(this.ticks, function (label, index) {
+					var shouldSkip = (skipRatio > 1 && index % skipRatio > 0);
+                    if (shouldSkip || (label === undefined || label === null)) {
 						return;
 					}
-					// Blank optionTicks
 					var isLastTick = this.ticks.length === index + 1;
-					//var isLastTick = index + (skipRatio / 2) >= this.ticks.length;
+					var isLastViableTick = (index + skipRatio) >= this.ticks.length || isLastTick;
 
 					var xLineValue = this.getPixelForTick(index); // xvalues for grid lines
 					var xLabelValue = this.getPixelForTick(index, gridLines.offsetGridLines); // x values for optionTicks (need to consider offsetLabel option)
+
 					if (gridLines.display) {
 						if (index === (typeof this.zeroLineIndex !== 'undefined' ? this.zeroLineIndex : 0)) {
 							// Draw the first index specially
@@ -6162,8 +6062,12 @@ module.exports = function(Chart) {
 					}
 
 					if (optionTicks.display) {
+						var pushTextToLeftAmount = 0;
+						if(isLastViableTick && xLabelValue > fullWidth - 17) {
+							pushTextToLeftAmount = 17 - (fullWidth - xLabelValue);
+						}
 						context.save();
-						context.translate((isLastTick) ? xLabelValue-17 : xLabelValue + optionTicks.labelOffset, (isRotated) ? this.top + 12 : options.position === "top" ? this.bottom - tl : this.top + tl);
+						context.translate((isLastViableTick) ? xLabelValue - pushTextToLeftAmount : xLabelValue + optionTicks.labelOffset, (isRotated) ? this.top + 12 : options.position === "top" ? this.bottom - tl : this.top + tl);
 						context.rotate(labelRotationRadians * -1);
 						context.font = tickLabelFont;
 						context.textAlign = (isRotated) ? "right" : "center";
@@ -6172,7 +6076,7 @@ module.exports = function(Chart) {
                         context.fillText(label.slice(-4), 0, 14);
 						context.restore();
 					}
-				}, this);*/
+				}, this);
 
 				if (scaleLabel.display) {
 					// Draw the scale label
